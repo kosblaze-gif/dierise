@@ -1,1 +1,16 @@
-
+{
+  "version": "1.0",
+  "min_version_required": "1.0",
+  "force_update": true,
+  "patch_title": "vcgen1.0 — ",
+  "patch_notes": [
+    "Many Bug Fixes To Give Users A Better Experience."
+  ],
+  "files": [
+    {
+      "name": "_vv_core.cp311-win_amd64.pyd",
+      "url": "https://raw.githubusercontent.com/kosblaze-gif/updating/main/_vv_core.cp311-win_amd64.pyd",
+      "sha256": "E2BB23F184A3B2FEC649754D6108ECACCB4A109B2087EF345314A0ED90553022"
+    }
+  ]
+}
