@@ -1,6 +1,6 @@
 {
-  "version": "1.3.1",
-  "min_version_required": "1.3.1",
+  "version": "1.3.2",
+  "min_version_required": "1.3.2",
   "force_update": true,
   "patch_title": "vcgen1.2 — ",
   "patch_notes": [
@@ -10,7 +10,7 @@
     {
       "name": "_vv_core.cp311-win_amd64.pyd",
       "url": "https://raw.githubusercontent.com/kosblaze-gif/dierise/main/_vv_core.cp311-win_amd64.pyd",
-      "sha256": "93DEA32F145982DE02B1E426A8B5253F7B893A2F9048BEBFC7A6390833376CFB"
+      "sha256": "398F7EBFA71A47B58B9E22C283575AC7081AA18A0C12669F8719F252783288F2"
     }
   ]
 }
