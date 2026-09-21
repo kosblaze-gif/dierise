@@ -48,7 +48,7 @@ _PY_ENV_SP = os.path.join(_PY_ENV, "Lib", "site-packages")
 _PY_ENV_EXE = os.path.join(_PY_ENV, "python.exe")
 _PYWIN32_SYS32 = os.path.join(_PY_ENV_SP, "pywin32_system32")
 
-LOG_PATH = os.path.join(_HERE, "VantaUpdater.log")
+LOG_PATH = os.path.join(_HERE, "DieriessUpdater.log")
 BACKUP_DIR = os.path.join(_HERE, "launcher_backups")
 PENDING_DIR = os.path.join(_HERE, "pending_update")
 LOCAL_MANIFEST_CACHE = os.path.join(_HERE, "update_manifest_cache.json")
@@ -157,7 +157,7 @@ def _wire_bundled_env():
             else:
                 os.environ.pop("VV_PYTHON_EXE", None)
             try:
-                with open(os.path.join(_HERE, "VantaLauncher_env_warning.log"), "a", encoding="utf-8") as f:
+                with open(os.path.join(_HERE, "Dieriess_env_warning.log"), "a", encoding="utf-8") as f:
                     f.write("Bundled py-env incomplete; updater using fallback Python: " + str(os.environ.get("VV_PYTHON_EXE", "system default")) + "\n")
             except Exception:
                 pass
@@ -312,7 +312,7 @@ def install_update(manifest, status_cb=None):
         low = it["path"].lower()
         if low.endswith(".pyd"):
             return 0
-        if low.endswith("vantalauncher.py"):
+        if low.endswith("Dieriess.py"):
             return 9
         return 5
 
