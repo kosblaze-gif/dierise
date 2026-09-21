@@ -30,7 +30,7 @@ except Exception:
     tk = None
     messagebox = None
 
-APP_VERSION = "6.1.1"
+APP_VERSION = "1.1.1"
 UPDATE_MANIFEST_URL = os.environ.get(
     "DIERESS_UPDATE_MANIFEST_URL",
     "https://raw.githubusercontent.com/kosblaze-gif/dierise/main/update_manifest.json"
