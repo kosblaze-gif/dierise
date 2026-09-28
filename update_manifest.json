@@ -1,8 +1,8 @@
 {
-  "version": "1.4.0",
-  "min_version_required": "1.4.0",
+  "version": "1.5.0",
+  "min_version_required": "1.5.0",
   "force_update": true,
-  "patch_title": "vcgen1.4 — ",
+  "patch_title": "vcgen1.5 — ",
   "patch_notes": [
     "Many Bug Fixes To Give Users A Better Experience."
   ],
@@ -10,7 +10,7 @@
     {
       "name": "_vv_core.cp311-win_amd64.pyd",
       "url": "https://raw.githubusercontent.com/kosblaze-gif/dierise/main/_vv_core.cp311-win_amd64.pyd",
-      "sha256": "4130AFF863B5B00EB04678A3FB4CB04119118B061696BECB4E42FD2CBA4FA3A5"
+      "sha256": "B4A7971B0B8F6F1E5634BE03FA8199C05A2891BB7313D97F81629E57E725FA6C"
     }
   ]
 }
