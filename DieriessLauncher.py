@@ -36,7 +36,7 @@ except Exception:
     messagebox = None
 
 APP_VERSION = "1.1.1"
-LAUNCHER_BUILD = "2.0.1"
+LAUNCHER_BUILD = "2.0.2"
 UPDATE_MANIFEST_URL = os.environ.get(
     "DIERESS_UPDATE_MANIFEST_URL",
     "https://raw.githubusercontent.com/kosblaze-gif/dierise/main/update_manifest.json"
@@ -565,14 +565,29 @@ def check_manifest():
     _apply_pending_updates()
     raw = _download_bytes(UPDATE_MANIFEST_URL)
     manifest = json.loads(raw.decode("utf-8", errors="replace"))
+    if verify_runtime(manifest)[0]:_cache_manifest(manifest)
     return manifest
 
 
+def _minimum_version(manifest):
+    return str(manifest.get('min_required_version') or manifest.get('min_version_required') or '0')
+
+
+def _mandatory_update_required(manifest):
+    if not manifest:return False
+    # A matching verified core is already the exact published update. A static
+    # force_update flag must not trap this installation in an endless update loop.
+    ok,_=verify_runtime(manifest)
+    if ok:return False
+    return bool(manifest.get('force_update') or _is_newer_version(_minimum_version(manifest),APP_VERSION))
+
+
 def update_needed(manifest):
-    latest = str(manifest.get("latest_version") or manifest.get("version") or "").strip()
-    min_required = str(manifest.get("min_required_version") or "").strip()
-    force = bool(manifest.get("force_update"))
-    return force or _is_newer_version(latest, APP_VERSION) or (min_required and _is_newer_version(min_required, APP_VERSION))
+    ok,_=verify_runtime(manifest)
+    if ok:return False
+    latest=str(manifest.get('latest_version') or manifest.get('version') or '').strip()
+    return bool(manifest.get('force_update') or _is_newer_version(latest,APP_VERSION)
+                or _is_newer_version(_minimum_version(manifest),APP_VERSION))
 
 
 def install_update(manifest, status_cb=None):
@@ -761,7 +776,7 @@ class UpdaterUI:
         self._busy=False;self.progress.stop();self.progress['value']=0
         self.check_btn.config(state='normal');self.repair_btn.config(state='normal')
         self.update_btn.config(state='normal' if self.manifest and update_needed(self.manifest) else 'disabled')
-        forced=bool(self.manifest and (self.manifest.get('force_update') or _is_newer_version(self.manifest.get('min_required_version','0'),APP_VERSION)))
+        forced=_mandatory_update_required(self.manifest)
         # Keep Launch clickable: its preflight gives an actionable reason instead of a silent gray button.
         self.launch_btn.config(state='normal',text='Update Required' if forced else 'Launch')
 
@@ -798,7 +813,7 @@ class UpdaterUI:
         try:
             manifest=check_manifest();self.manifest=manifest
             latest=str(manifest.get('latest_version') or manifest.get('version') or 'unknown')
-            self.set_notes(manifest.get('notes') or f'Latest release: {latest}')
+            self.set_notes(manifest.get('notes') or manifest.get('patch_notes') or f'Latest release: {latest}')
             self.set_status(f'Update available: {latest}' if update_needed(manifest) else 'Your files are up to date.',WARN if update_needed(manifest) else GOOD)
         except Exception as exc:
             log(str(exc));self.set_status('Update check could not finish.',WARN);self.set_notes(str(exc))
@@ -838,7 +853,7 @@ class UpdaterUI:
 
     def _launch_check(self):
         try:
-            if self.manifest and (self.manifest.get('force_update') or _is_newer_version(self.manifest.get('min_required_version','0'),APP_VERSION)):
+            if _mandatory_update_required(self.manifest):
                 raise RuntimeError('The update manifest requires an update before launch. Install the update and restart the host. If update hashes mismatch, the publisher must correct the manifest first.')
             runtime_preflight();ok,msg=verify_runtime(self.manifest)
             if not ok:raise RuntimeError(msg)
