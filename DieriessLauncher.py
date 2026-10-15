@@ -36,7 +36,7 @@ except Exception:
     messagebox = None
 
 APP_VERSION = "1.1.1"
-LAUNCHER_BUILD = "2.0.0"
+LAUNCHER_BUILD = "2.0.1"
 UPDATE_MANIFEST_URL = os.environ.get(
     "DIERESS_UPDATE_MANIFEST_URL",
     "https://raw.githubusercontent.com/kosblaze-gif/dierise/main/update_manifest.json"
@@ -565,7 +565,6 @@ def check_manifest():
     _apply_pending_updates()
     raw = _download_bytes(UPDATE_MANIFEST_URL)
     manifest = json.loads(raw.decode("utf-8", errors="replace"))
-    _cache_manifest(manifest)
     return manifest
 
 
@@ -604,7 +603,11 @@ def install_update(manifest, status_cb=None):
             status_cb(f"Downloading {rel}...")
         data = _download_bytes(item["url"])
         if item["sha256"] and _hash_bytes_hex(data).lower() != item["sha256"]:
-            raise RuntimeError(f"SHA256 mismatch for {rel}")
+            actual=_hash_bytes_hex(data).lower()
+            log(f"Update integrity mismatch: {rel}; expected={item['sha256']}; downloaded={actual}; bytes={len(data)}")
+            raise RuntimeError(f"{rel} does not match the published update hash. "
+                "Your update_manifest.json SHA256 must be regenerated from the exact uploaded file. "
+                "The existing core was kept. See Logs for expected/downloaded hashes.")
         dst = _safe_update_path(rel)
         if not _replace_file(dst, data):
             raise RuntimeError(f"{rel} is locked. Update saved pending. Close Gtuner and reopen.")
@@ -759,7 +762,8 @@ class UpdaterUI:
         self.check_btn.config(state='normal');self.repair_btn.config(state='normal')
         self.update_btn.config(state='normal' if self.manifest and update_needed(self.manifest) else 'disabled')
         forced=bool(self.manifest and (self.manifest.get('force_update') or _is_newer_version(self.manifest.get('min_required_version','0'),APP_VERSION)))
-        self.launch_btn.config(state='normal' if self._runtime_ready and not forced else 'disabled')
+        # Keep Launch clickable: its preflight gives an actionable reason instead of a silent gray button.
+        self.launch_btn.config(state='normal',text='Update Required' if forced else 'Launch')
 
     def refresh_runtime(self):
         ok,msg=verify_runtime(self.manifest)
@@ -834,6 +838,8 @@ class UpdaterUI:
 
     def _launch_check(self):
         try:
+            if self.manifest and (self.manifest.get('force_update') or _is_newer_version(self.manifest.get('min_required_version','0'),APP_VERSION)):
+                raise RuntimeError('The update manifest requires an update before launch. Install the update and restart the host. If update hashes mismatch, the publisher must correct the manifest first.')
             runtime_preflight();ok,msg=verify_runtime(self.manifest)
             if not ok:raise RuntimeError(msg)
             self._post_ui(self._accept_launch)
