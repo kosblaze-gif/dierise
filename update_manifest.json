@@ -1,6 +1,6 @@
 {
-  "version": "1.6.0",
-  "min_version_required": "1.6.0",
+  "version": "1.6.2",
+  "min_version_required": "1.6.2",
   "force_update": true,
   "patch_title": "vcgen1.6 — ",
   "patch_notes": [
@@ -9,8 +9,8 @@
   "files": [
     {
       "name": "_vv_core.cp311-win_amd64.pyd",
-      "url": "https://raw.githubusercontent.com/kosblaze-gif/dierise/main/_vv_core.cp311-win_amd64.pyd",
-      "sha256": "BC3034EAD7209DB0E65CACB66AF85CFEDFF2248734E822B6107D6A4013122122"
+      "url": "https://github.com/kosblaze-gif/dierise/releases/download/1.6.2/_vv_core.cp311-win_amd64.pyd",
+      "sha256": "68F3DB27BBF1B5D4E7F8B1D004F89921C157B18BC4B5556D60E0E3BED1130EAE"
     }
   ]
 }
