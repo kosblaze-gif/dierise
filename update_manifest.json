@@ -1,6 +1,6 @@
 {
   "version": "1.6.0",
-  "min_version_required": "1.5.0",
+  "min_version_required": "1.6.0",
   "force_update": true,
   "patch_title": "vcgen1.6 — ",
   "patch_notes": [
